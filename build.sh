@@ -42,7 +42,7 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
     -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
   docker run --rm --platform linux/amd64 --privileged \
     -v "$ROOT:/work" -w /work \
-    luckfox-sdk-builder bash -lc "./system.sh -f '$ROOTFS' -d '$DEVICE'"
+    luckfox-sdk-builder -lc "./system.sh -f '$ROOTFS' -d '$DEVICE'"
   cp "$ROOT/output/$DEVICE-sysupgrade.img" "$ROOT/dist/$DEVICE-sysupgrade.img"
 fi
 
