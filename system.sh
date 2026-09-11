@@ -3,11 +3,13 @@ set -euo pipefail
 
 ROOTFS_NAME="rootfs-alpine.tar.gz"
 DEVICE_NAME="pico-mini-b"
+BUILD_STAGE="all"
 
-while getopts ":f:d:" opt; do
+while getopts ":f:d:s:" opt; do
   case ${opt} in
   f) ROOTFS_NAME="${OPTARG}" ;;
   d) DEVICE_NAME="${OPTARG}" ;;
+  s) BUILD_STAGE="${OPTARG}" ;;
   ?)
     echo "Invalid option: -${OPTARG}."
     exit 1
@@ -27,6 +29,8 @@ pico-pro-max) DEVICE_ID="8" ;;
   exit 1
   ;;
 esac
+
+case "$BUILD_STAGE" in all|board|userspace) ;; *) echo "Invalid stage: $BUILD_STAGE" >&2; exit 2 ;; esac
 
 ROOTFS_PATH="$(realpath "$ROOTFS_NAME")"
 ROOTFS_NAME="$(basename "$ROOTFS_PATH")"
@@ -84,10 +88,12 @@ echo "RK_CUSTOM_ROOTFS=$RK_CUSTOM_ROOTFS"
 test -f "$RK_CUSTOM_ROOTFS"
 
 # build sysdrv - rootfs
-./build.sh uboot
-./build.sh kernel
-./build.sh driver
-./build.sh env
+if [ "$BUILD_STAGE" != userspace ]; then
+  ./build.sh uboot
+  ./build.sh kernel
+  ./build.sh driver
+  ./build.sh env
+fi
 #./build.sh app
 # package firmware
 

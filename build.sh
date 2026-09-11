@@ -4,13 +4,15 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEVICE="pico-pro-max"
 COMMAND="all"
+STAGE="all"
 SDK_URL="https://github.com/soyflourbread/luckfox-pico-sdk.git"
 SDK_COMMIT="8dde6a3209dffdaedf4c3fe0d5367ee413987951"
 
-usage() { echo "Usage: $0 [doctor|rootfs|firmware|all] [-d device]"; }
+usage() { echo "Usage: $0 [doctor|rootfs|firmware|all] [-d device] [-s all|board|userspace]"; }
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -d) DEVICE="${2:?device is required}"; shift 2 ;;
+    -s) STAGE="${2:?stage is required}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     doctor|rootfs|firmware|all) COMMAND="$1"; shift ;;
     *) usage >&2; exit 2 ;;
@@ -55,7 +57,7 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
         git -C /work/sdk checkout "$SDK_COMMIT"
         git -C /work/sdk submodule update --init --recursive
       fi
-      ./system.sh -f "$CONTAINER_ROOTFS" -d "$DEVICE"
+      ./system.sh -f "$CONTAINER_ROOTFS" -d "$DEVICE" -s "$STAGE"
     '
   cp "$ROOT/output/$DEVICE-sysupgrade.img" "$ROOT/dist/$DEVICE-sysupgrade.img"
 fi

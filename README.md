@@ -63,6 +63,11 @@ working tree. On Apple Silicon Docker runs the SDK builder through its
 ./build.sh all -d pico-pro-max
 ```
 
+The build is split into a cached board support layer and a userspace layer.
+Use `-s board` after changing U-Boot, kernel, DTB, or vendor patches; use
+`-s userspace` for Alpine packages and overlay changes without rebuilding the
+board support layer. The SDK volume keeps both layers between runs.
+
 The rootfs archive and firmware are written to `dist/`. Run `./build.sh rootfs`
 or `./build.sh firmware` to build either stage independently.
 
