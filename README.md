@@ -1,4 +1,4 @@
-# luckfox-pico
+# luckfox-pico-alpine
 
 Linux systems for LuckFox Pico series, including
 Pico Mini b, Pico Plus and Pico Pro Max (all models with SPI flash).
@@ -8,7 +8,7 @@ Currently only [Alpine Linux](https://alpinelinux.org/) is available.
 ## Downloads
 
 Check out
-[Github Actions Artifacts](https://github.com/soyflourbread/luckfox-pico/actions/workflows/main.yml)
+[Github Actions Artifacts](https://github.com/merlinvn/luckfox-pico-alpine/actions/workflows/main.yml)
 for latest Alpine Linux images.
 
 ## Flashing
@@ -73,8 +73,12 @@ or `./build.sh firmware` to build either stage independently.
 
 ## Customization
 
-Just fork this repo and trigger Github Actions after you made your changes!
+Edit the rootfs profile and run the same build locally or in GitHub Actions.
 
 For example,
 * To add software packages, edit `bootstrap.sh`.
 * To change files in the system image, edit `overlay/`.
+
+The firmware artifact is `dist/pico-pro-max-sysupgrade.img`. GitHub Actions
+stores Docker BuildKit layers in the Actions cache; local builds persist SDK
+objects in the `luckfox-sdk` Docker volume.

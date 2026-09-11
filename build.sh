@@ -7,6 +7,10 @@ COMMAND="all"
 STAGE="all"
 SDK_URL="https://github.com/soyflourbread/luckfox-pico-sdk.git"
 SDK_COMMIT="8dde6a3209dffdaedf4c3fe0d5367ee413987951"
+DOCKER_CACHE_ARGS=()
+if [ "${GITHUB_ACTIONS:-}" = true ]; then
+  DOCKER_CACHE_ARGS=(--cache-from type=gha --cache-to type=gha,mode=max)
+fi
 
 usage() { echo "Usage: $0 [doctor|rootfs|firmware|all] [-d device] [-s all|board|userspace]"; }
 while [ "$#" -gt 0 ]; do
@@ -42,7 +46,7 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
   ROOTFS="$ROOT/dist/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || ROOTFS="$ROOT/output/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || { echo "Rootfs archive not found; run rootfs first" >&2; exit 1; }
-  docker build --platform linux/amd64 \
+  docker buildx build --load --platform linux/amd64 "${DOCKER_CACHE_ARGS[@]}" \
     -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
   CONTAINER_ROOTFS="/work/dist/$(basename "$ROOTFS")"
   docker run --rm --platform linux/amd64 --privileged \
