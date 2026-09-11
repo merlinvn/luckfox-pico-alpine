@@ -41,11 +41,6 @@ docker run --rm \
   luckfox-rootfs:3.20 \
   /bootstrap.sh
 
-docker run --rm --user 0 --platform linux/arm/v7 \
-  --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
-  arm32v7/alpine:3.20 \
-  sh -c 'find /extrootfs -mindepth 1 ! -type l -exec chown 0:0 {} +'
-
 echo "=== Validate generated rootfs ==="
 test -x "$ROOTFS_WORKSPACE_MNT/bin/busybox"
 test -d "$ROOTFS_WORKSPACE_MNT/etc"
@@ -80,6 +75,12 @@ overlay() {
 }
 
 overlay
+
+# Restore root ownership only after the host overlay has been applied.
+docker run --rm --user 0 --platform linux/arm/v7 \
+  --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
+  arm32v7/alpine:3.20 \
+  sh -c 'find /extrootfs -mindepth 1 ! -type l -exec chown 0:0 {} +'
 
 echo "=== Validate final rootfs ==="
 
