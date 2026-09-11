@@ -24,7 +24,7 @@ DEVICE_ID="6"
 case $DEVICE_NAME in
 pico-mini-b) DEVICE_ID="6" ;;
 pico-plus) DEVICE_ID="7" ;;
-pico-pro-max) DEVICE_ID="8" ;;
+pico-pro-max) DEVICE_ID="4" ;;
 *)
   echo "Invalid device: ${DEVICE_NAME}."
   exit 1
@@ -68,7 +68,7 @@ command -v arm-rockchip830-linux-uclibcgnueabihf-gcc
 arm-rockchip830-linux-uclibcgnueabihf-gcc --version
 
 rm -rf .BoardConfig.mk
-echo "$DEVICE_ID" | ./build.sh lunch
+printf '%s\n1\n1\n' "$DEVICE_ID" | ./build.sh lunch
 
 CUSTOM_ROOTFS="$PWD/sysdrv/custom_rootfs/$ROOTFS_NAME"
 
