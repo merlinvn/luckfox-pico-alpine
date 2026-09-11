@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
       - uses: actions/checkout@v4
         with:
           submodules: false
