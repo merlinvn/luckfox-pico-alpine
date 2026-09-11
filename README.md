@@ -53,8 +53,10 @@ ping 172.32.0.93 # it works!
 ## Local build
 
 Docker provides both the ARMv7 Alpine rootfs environment and the Ubuntu 22.04
-AMD64 Luckfox SDK environment. On Apple Silicon Docker runs the SDK builder
-through its `linux/amd64` emulation; a native x86_64 Linux host is faster.
+AMD64 Luckfox SDK environment. The SDK is cloned at its pinned commit into a
+Docker named volume during the build, so generated SDK files never dirty the
+working tree. On Apple Silicon Docker runs the SDK builder through its
+`linux/amd64` emulation; a native x86_64 Linux host is faster.
 
 ```bash
 ./build.sh doctor

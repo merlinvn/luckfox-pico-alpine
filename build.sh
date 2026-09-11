@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEVICE="pico-pro-max"
 COMMAND="all"
+SDK_URL="https://github.com/soyflourbread/luckfox-pico-sdk.git"
+SDK_COMMIT="8dde6a3209dffdaedf4c3fe0d5367ee413987951"
 
 usage() { echo "Usage: $0 [doctor|rootfs|firmware|all] [-d device]"; }
 while [ "$#" -gt 0 ]; do
@@ -42,8 +44,19 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
     -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
   CONTAINER_ROOTFS="/work/dist/$(basename "$ROOTFS")"
   docker run --rm --platform linux/amd64 --privileged \
-    -v "$ROOT:/work" -w /work \
-    luckfox-sdk-builder -lc "./system.sh -f '$CONTAINER_ROOTFS' -d '$DEVICE'"
+    -v "$ROOT:/work" -v luckfox-sdk:/work/sdk -w /work \
+    -e SDK_URL="$SDK_URL" -e SDK_COMMIT="$SDK_COMMIT" \
+    -e CONTAINER_ROOTFS="$CONTAINER_ROOTFS" -e DEVICE="$DEVICE" \
+    luckfox-sdk-builder -lc '
+      set -e
+      if [ ! -x /work/sdk/build.sh ]; then
+        rm -rf /work/sdk/* /work/sdk/.[!.]* /work/sdk/..?* 2>/dev/null || true
+        git clone --recurse-submodules "$SDK_URL" /work/sdk
+        git -C /work/sdk checkout "$SDK_COMMIT"
+        git -C /work/sdk submodule update --init --recursive
+      fi
+      ./system.sh -f "$CONTAINER_ROOTFS" -d "$DEVICE"
+    '
   cp "$ROOT/output/$DEVICE-sysupgrade.img" "$ROOT/dist/$DEVICE-sysupgrade.img"
 fi
 

@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
       - name: build rootfs and firmware
         run: ./build.sh all -d pico-pro-max
       - uses: actions/upload-artifact@v4
