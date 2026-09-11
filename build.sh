@@ -38,7 +38,8 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
   ROOTFS="$ROOT/dist/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || ROOTFS="$ROOT/output/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || { echo "Rootfs archive not found; run rootfs first" >&2; exit 1; }
-  docker build -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
+  docker build --platform linux/amd64 \
+    -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
   docker run --rm --platform linux/amd64 --privileged \
     -v "$ROOT:/work" -w /work \
     luckfox-sdk-builder bash -lc "./system.sh -f '$ROOTFS' -d '$DEVICE'"
