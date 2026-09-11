@@ -6,7 +6,7 @@ DEVICE="pico-pro-max"
 COMMAND="all"
 STAGE="all"
 SDK_URL="https://github.com/merlinvn/luckfox-pico-sdk.git"
-SDK_COMMIT="824b817f889c2cbff1d48fcdb18ab494a68f69d1"
+SDK_COMMIT="06ddc0463e6f86edc6a659582bdcbbf64337798b"
 DOCKER_CACHE_ARGS=()
 if [ "${GITHUB_ACTIONS:-}" = true ]; then
   DOCKER_CACHE_ARGS=(--cache-from type=gha --cache-to type=gha,mode=max)
