@@ -5,7 +5,15 @@ ROOTFS_FILE="rootfs-alpine.tar.gz"
 
 ROOTFS_WORKSPACE_MNT="$(mktemp -d "${TMPDIR:-/tmp}/luckfox-rootfs.XXXXXX")"
 
-rootfs_workspace_drop() { rm -rf "$ROOTFS_WORKSPACE_MNT"; }
+rootfs_workspace_drop() {
+  if [ -d "$ROOTFS_WORKSPACE_MNT" ]; then
+    docker run --rm --user 0 --platform linux/arm/v7 \
+      --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
+      arm32v7/alpine:3.20 \
+      sh -c 'find /extrootfs -mindepth 1 -delete' >/dev/null 2>&1 || true
+    rm -rf "$ROOTFS_WORKSPACE_MNT"
+  fi
+}
 
 trap rootfs_workspace_drop EXIT
 
