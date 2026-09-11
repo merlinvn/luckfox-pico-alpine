@@ -55,7 +55,11 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
     -e CONTAINER_ROOTFS="$CONTAINER_ROOTFS" -e DEVICE="$DEVICE" -e STAGE="$STAGE" \
     luckfox-sdk-builder -lc '
       set -e
-      if [ ! -x /work/sdk/build.sh ]; then
+      SDK_HEAD=""
+      if [ -d /work/sdk/.git ]; then
+        SDK_HEAD="$(git -C /work/sdk rev-parse HEAD 2>/dev/null || true)"
+      fi
+      if [ "$SDK_HEAD" != "$SDK_COMMIT" ] || [ ! -x /work/sdk/project/build.sh ]; then
         rm -rf /work/sdk/* /work/sdk/.[!.]* /work/sdk/..?* 2>/dev/null || true
         git clone --recurse-submodules "$SDK_URL" /work/sdk
         git -C /work/sdk checkout "$SDK_COMMIT"
