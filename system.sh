@@ -68,7 +68,9 @@ command -v arm-rockchip830-linux-uclibcgnueabihf-gcc
 arm-rockchip830-linux-uclibcgnueabihf-gcc --version
 
 rm -rf .BoardConfig.mk
-printf '%s\n1\n1\n' "$DEVICE_ID" | ./build.sh lunch
+# Pico Pro Max SPI_NAND has a Buildroot board config; RK_CUSTOM_ROOTFS
+# overrides its rootfs payload during packaging.
+printf '%s\n1\n0\n' "$DEVICE_ID" | ./build.sh lunch
 
 CUSTOM_ROOTFS="$PWD/sysdrv/custom_rootfs/$ROOTFS_NAME"
 
