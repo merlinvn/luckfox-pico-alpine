@@ -48,7 +48,7 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
   docker run --rm --platform linux/amd64 --privileged \
     -v "$ROOT:/work" -v luckfox-sdk:/work/sdk -w /work \
     -e SDK_URL="$SDK_URL" -e SDK_COMMIT="$SDK_COMMIT" \
-    -e CONTAINER_ROOTFS="$CONTAINER_ROOTFS" -e DEVICE="$DEVICE" \
+    -e CONTAINER_ROOTFS="$CONTAINER_ROOTFS" -e DEVICE="$DEVICE" -e STAGE="$STAGE" \
     luckfox-sdk-builder -lc '
       set -e
       if [ ! -x /work/sdk/build.sh ]; then
