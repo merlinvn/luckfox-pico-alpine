@@ -40,9 +40,10 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
   [ -f "$ROOTFS" ] || { echo "Rootfs archive not found; run rootfs first" >&2; exit 1; }
   docker build --platform linux/amd64 \
     -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
+  CONTAINER_ROOTFS="/work/dist/$(basename "$ROOTFS")"
   docker run --rm --platform linux/amd64 --privileged \
     -v "$ROOT:/work" -w /work \
-    luckfox-sdk-builder -lc "./system.sh -f '$ROOTFS' -d '$DEVICE'"
+    luckfox-sdk-builder -lc "./system.sh -f '$CONTAINER_ROOTFS' -d '$DEVICE'"
   cp "$ROOT/output/$DEVICE-sysupgrade.img" "$ROOT/dist/$DEVICE-sysupgrade.img"
 fi
 
