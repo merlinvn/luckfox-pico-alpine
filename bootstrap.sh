@@ -52,3 +52,7 @@ test -x /extrootfs/usr/sbin/dropbear
 test -x /extrootfs/etc/init.d/dropbear
 test -d /extrootfs/var
 test -d /extrootfs/etc
+
+# Hand ownership to the host process while it applies the overlay. The build
+# script restores root ownership before creating the archive.
+chown -R "${HOST_UID:?}:${HOST_GID:?}" /extrootfs

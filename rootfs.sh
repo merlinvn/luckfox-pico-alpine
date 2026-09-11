@@ -27,10 +27,16 @@ docker run --rm \
   --name armv7alpine \
   --platform linux/arm/v7 \
   --net host \
+  --env HOST_UID="$(id -u)" --env HOST_GID="$(id -g)" \
   --mount type=bind,source="$(pwd)/bootstrap.sh",target=/bootstrap.sh,readonly \
   --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
   luckfox-rootfs:3.20 \
   /bootstrap.sh
+
+docker run --rm --user 0 \
+  --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
+  arm32v7/alpine:3.20 \
+  chown -R 0:0 /extrootfs
 
 echo "=== Validate generated rootfs ==="
 test -x "$ROOTFS_WORKSPACE_MNT/bin/busybox"
@@ -52,7 +58,7 @@ overlay() {
   sed -i -e "s/{TTY_PORT}/$TTY_PORT/g" "$OVERLAY_WORKSPACE/etc/securetty"
   sed -i -e "s/{TTY_PORT}/$TTY_PORT/g" "$OVERLAY_WORKSPACE/etc/inittab"
 
-  rsync -a "$OVERLAY_WORKSPACE/" "$ROOTFS_WORKSPACE_MNT/"
+  rsync -a --no-owner --no-group "$OVERLAY_WORKSPACE/" "$ROOTFS_WORKSPACE_MNT/"
   rm -rf "$OVERLAY_WORKSPACE"
 
   echo "Include /etc/ssh/sshd_config.d/*.conf" >> \
