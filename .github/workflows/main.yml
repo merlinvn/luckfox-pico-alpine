@@ -1,0 +1,18 @@
+name: ci
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main", "pico-max-alpine-fix"]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: build rootfs and firmware
+        run: ./build.sh all -d pico-pro-max
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pico-pro-max-alpine
+          path: dist/

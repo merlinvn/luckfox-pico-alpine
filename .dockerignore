@@ -1,0 +1,6 @@
+.git
+sdk
+output
+dist
+*.ext4
+overlay-workspace
