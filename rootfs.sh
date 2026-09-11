@@ -103,8 +103,12 @@ rm -rf "$ROOTFS_WORKSPACE_MNT/lost+found"
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
-tar czf "$OUTPUT_DIR/$ROOTFS_FILE" \
-  -C "$ROOTFS_WORKSPACE_MNT" .
+mkdir -p "$OUTPUT_DIR"
+docker run --rm --user 0 --platform linux/arm/v7 \
+  --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs,readonly \
+  --mount type=bind,source="$(pwd)/$OUTPUT_DIR",target=/out \
+  arm32v7/alpine:3.20 \
+  tar czf "/out/$ROOTFS_FILE" -C /extrootfs .
 
 echo "=== Rootfs archive ==="
 ls -lh "$OUTPUT_DIR/$ROOTFS_FILE"
