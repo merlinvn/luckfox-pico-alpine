@@ -33,10 +33,10 @@ docker run --rm \
   luckfox-rootfs:3.20 \
   /bootstrap.sh
 
-docker run --rm --user 0 \
+docker run --rm --user 0 --platform linux/arm/v7 \
   --mount type=bind,source="$ROOTFS_WORKSPACE_MNT",target=/extrootfs \
   arm32v7/alpine:3.20 \
-  chown -R 0:0 /extrootfs
+  sh -c 'find /extrootfs -mindepth 1 -exec chown 0:0 {} +'
 
 echo "=== Validate generated rootfs ==="
 test -x "$ROOTFS_WORKSPACE_MNT/bin/busybox"
