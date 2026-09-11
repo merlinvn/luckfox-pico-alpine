@@ -4,6 +4,7 @@ set -euo pipefail
 ROOTFS_NAME="rootfs-alpine.tar.gz"
 DEVICE_NAME="pico-mini-b"
 BUILD_STAGE="all"
+PROJECT_ROOT="$(pwd)"
 
 while getopts ":f:d:s:" opt; do
   case ${opt} in
@@ -123,5 +124,6 @@ test -f output/image/update.img
 
 popd || exit
 
-mkdir -p ../output
-cp sdk/output/image/update.img "../output/$DEVICE_NAME-sysupgrade.img"
+mkdir -p "$PROJECT_ROOT/output"
+cp "$PROJECT_ROOT/sdk/output/image/update.img" \
+  "$PROJECT_ROOT/output/$DEVICE_NAME-sysupgrade.img"
