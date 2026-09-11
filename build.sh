@@ -46,7 +46,7 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
   ROOTFS="$ROOT/dist/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || ROOTFS="$ROOT/output/rootfs-alpine.tar.gz"
   [ -f "$ROOTFS" ] || { echo "Rootfs archive not found; run rootfs first" >&2; exit 1; }
-  docker buildx build --load --platform linux/amd64 "${DOCKER_CACHE_ARGS[@]}" \
+  docker buildx build --load --platform linux/amd64 ${DOCKER_CACHE_ARGS[@]-} \
     -f "$ROOT/docker/sdk.Dockerfile" -t luckfox-sdk-builder "$ROOT/docker"
   CONTAINER_ROOTFS="/work/dist/$(basename "$ROOTFS")"
   docker run --rm --platform linux/amd64 --privileged \
