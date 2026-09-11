@@ -28,7 +28,7 @@ sudo ./upgrade_tool uf pico-pro-max-sysupgrade.img
 The default username/password is `root:luckfox`.
 
 UART serial debug port is enabled,
-and `sshd` server is installed and enabled as well.
+and the Dropbear SSH server is installed and enabled.
 
 To connect to it via ethernet, simply do
 ```bash
