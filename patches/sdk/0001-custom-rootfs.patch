@@ -1,0 +1,32 @@
+diff --git a/project/build.sh b/project/build.sh
+index 0000000..1111111 100755
+--- a/project/build.sh
++++ b/project/build.sh
+@@
+ function __PACKAGE_ROOTFS()
+ {
+-	local rootfs_tarball _target_dir _install_dir
+-	rootfs_tarball="$RK_PROJECT_PATH_SYSDRV/rootfs_${RK_LIBC_TPYE}_${RK_CHIP}.tar"
+-	if [ -f $rootfs_tarball ]; then
+-		tar xf $rootfs_tarball -C $RK_PROJECT_OUTPUT
+-	else
+-		msg_error "Not found rootfs tarball: $rootfs_tarball"
+-		exit 1
+-	fi
++	local rootfs_tarball
++	if [ -n "${RK_CUSTOM_ROOTFS:-}" ]; then
++		rootfs_tarball="$RK_CUSTOM_ROOTFS"
++		if [ ! -f "$rootfs_tarball" ]; then
++			msg_error "Not found custom rootfs tarball: $rootfs_tarball"
++			exit 1
++		fi
++		mkdir -p "$RK_PROJECT_PACKAGE_ROOTFS_DIR"
++		tar xf "$rootfs_tarball" -C "$RK_PROJECT_PACKAGE_ROOTFS_DIR"
++	else
++		rootfs_tarball="$RK_PROJECT_PATH_SYSDRV/rootfs_${RK_LIBC_TPYE}_${RK_CHIP}.tar"
++		if [ ! -f "$rootfs_tarball" ]; then
++			msg_error "Not found rootfs tarball: $rootfs_tarball"
++			exit 1
++		fi
++		tar xf "$rootfs_tarball" -C "$RK_PROJECT_OUTPUT"
++	fi

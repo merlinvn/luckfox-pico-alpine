@@ -5,8 +5,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEVICE="pico-pro-max"
 COMMAND="all"
 STAGE="all"
-SDK_URL="https://github.com/soyflourbread/luckfox-pico-sdk.git"
-SDK_COMMIT="8dde6a3209dffdaedf4c3fe0d5367ee413987951"
+SDK_URL="https://github.com/merlinvn/luckfox-pico-sdk.git"
+SDK_COMMIT="824b817f889c2cbff1d48fcdb18ab494a68f69d1"
 DOCKER_CACHE_ARGS=()
 if [ "${GITHUB_ACTIONS:-}" = true ]; then
   DOCKER_CACHE_ARGS=(--cache-from type=gha --cache-to type=gha,mode=max)
@@ -60,6 +60,9 @@ if [ "$COMMAND" = firmware ] || [ "$COMMAND" = all ]; then
         git clone --recurse-submodules "$SDK_URL" /work/sdk
         git -C /work/sdk checkout "$SDK_COMMIT"
         git -C /work/sdk submodule update --init --recursive
+      fi
+      if ! grep -q 'RK_CUSTOM_ROOTFS' /work/sdk/project/build.sh; then
+        git -C /work/sdk apply /work/patches/sdk/0001-custom-rootfs.patch
       fi
       ./system.sh -f "$CONTAINER_ROOTFS" -d "$DEVICE" -s "$STAGE"
     '
